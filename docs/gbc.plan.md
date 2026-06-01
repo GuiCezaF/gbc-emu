@@ -1,44 +1,44 @@
-# Roadmap — Emulador de Game Boy Color
+# Roadmap - Game Boy Color Emulator
 
-## Visão Geral
+## Overview
 
-| Fase | Objetivo | Marco |
+| Phase | Goal | Milestone |
 |--------|--------|--------|
-| 1 | Loader de ROM | Carregar ROMs e ler cabeçalhos |
-| 2 | Memory Bus | Sistema de memória funcionando |
-| 3 | CPU Básica | Executar instruções simples |
-| 4 | Testes de CPU | Passar nos testes básicos |
-| 5 | Controle de Fluxo | Loops, chamadas e retornos |
-| 6 | CPU Completa | Passar no `cpu_instrs.gb` |
-| 7 | Timers | Timer funcionando |
-| 8 | Interrupts | Sistema de interrupções |
-| 9 | Renderização Inicial | Exibir tiles |
-| 10 | Background | Renderizar cenários |
-| 11 | Boot Sequence | Logo Nintendo aparece |
-| 12 | Sprites | Personagens aparecem |
-| 13 | MBC1 | Jogos maiores iniciam |
-| 14 | Primeiro Jogo | Jogo totalmente jogável |
-| 15 | Recursos GBC | Jogos exclusivos de GBC |
-| 16 | - | Compatibilidade avançada |
-| 17 | Áudio | Sons e músicas |
-| 18 | Otimização | Compatibilidade e performance |
+| 1 | ROM Loader | Load ROMs and read headers |
+| 2 | Memory Bus | Working memory system |
+| 3 | Basic CPU | Execute simple instructions |
+| 4 | CPU Tests | Pass the basic tests |
+| 5 | Flow Control | Loops, calls, and returns |
+| 6 | Full CPU | Pass `cpu_instrs.gb` |
+| 7 | Timers | Working timer |
+| 8 | Interrupts | Interrupt system |
+| 9 | Initial Rendering | Display tiles |
+| 10 | Background | Render backgrounds |
+| 11 | Boot Sequence | Show the Nintendo logo |
+| 12 | Sprites | Show characters |
+| 13 | MBC1 | Larger games boot |
+| 14 | First Playable Game | Fully playable game |
+| 15 | GBC Features | GBC-exclusive games |
+| 16 | - | Advanced compatibility |
+| 17 | Audio | Sounds and music |
+| 18 | Optimization | Compatibility and performance |
 
 ---
 
-# Fase 1 — Loader de ROM
+# Phase 1 - ROM Loader
 
-## Objetivo
+## Goal
 
-Carregar e interpretar ROMs.
+Load and interpret ROMs.
 
-## Implementar
+## Implement
 
-- [x] Leitura de arquivos `.gb`
-- [x] Leitura de arquivos `.gbc`
-- [x] Parser do cabeçalho
-- [x] Exibição de informações da ROM
+- [x] Read `.gb` files
+- [x] Read `.gbc` files
+- [x] Header parser
+- [x] Display ROM information
 
-## Estrutura Inicial
+## Initial Structure
 
 ```go
 type Cartridge struct {
@@ -46,47 +46,47 @@ type Cartridge struct {
 }
 ```
 
-## Marco
+## Milestone
 
-- [x] Carregar qualquer ROM
-- [x] Exibir informações do cartucho
+- [x] Load any ROM
+- [x] Display cartridge information
 
 ---
 
-# Fase 2 — Memory Bus
+# Phase 2 - Memory Bus
 
-## Objetivo
+## Goal
 
-Centralizar acessos à memória.
+Centralize memory access.
 
-## Implementar
+## Implement
 
 ```go
 Read(addr uint16) byte
 Write(addr uint16, value byte)
 ```
 
-## Componentes
+## Components
 
 - [ ] ROM
 - [ ] VRAM
 - [ ] WRAM
 - [ ] HRAM
-- [ ] IO Registers
+- [ ] I/O registers
 
-## Marco
+## Milestone
 
-- [ ] CPU acessando toda memória através do Bus
+- [ ] CPU accessing all memory through the bus
 
 ---
 
-# Fase 3 — CPU Básica
+# Phase 3 - Basic CPU
 
-## Objetivo
+## Goal
 
-Executar as primeiras instruções.
+Execute the first instructions.
 
-## Registradores
+## Registers
 
 - [ ] AF
 - [ ] BC
@@ -95,26 +95,26 @@ Executar as primeiras instruções.
 - [ ] SP
 - [ ] PC
 
-## Primeiros OpCodes
+## First Opcodes
 
 - [ ] NOP
 - [ ] LD
 - [ ] INC
 - [ ] DEC
 
-## Marco
+## Milestone
 
-- [ ] Executar programas simples sem travamentos
+- [ ] Execute simple programs without crashes
 
 ---
 
-# Fase 4 — Testes de CPU
+# Phase 4 - CPU Tests
 
-## Objetivo
+## Goal
 
-Validar operações matemáticas.
+Validate arithmetic operations.
 
-## Implementar
+## Implement
 
 - [ ] ADD
 - [ ] ADC
@@ -125,23 +125,23 @@ Validar operações matemáticas.
 - [ ] XOR
 - [ ] CP
 
-## Testes
+## Tests
 
-- [ ] ROMs de teste da comunidade
+- [ ] Community test ROMs
 
-## Marco
+## Milestone
 
-- [ ] Passar nos testes básicos da ALU
+- [ ] Pass the basic ALU tests
 
 ---
 
-# Fase 5 — Controle de Fluxo
+# Phase 5 - Flow Control
 
-## Objetivo
+## Goal
 
-Executar programas reais.
+Execute real programs.
 
-## Implementar
+## Implement
 
 - [ ] JP
 - [ ] JR
@@ -149,65 +149,65 @@ Executar programas reais.
 - [ ] RET
 - [ ] RST
 
-## Conceitos
+## Concepts
 
 - [ ] Stack
-- [ ] Saltos condicionais
-- [ ] Endereçamento
+- [ ] Conditional jumps
+- [ ] Addressing
 
-## Marco
+## Milestone
 
-- [ ] Programas com loops funcionando
+- [ ] Programs with working loops
 
 ---
 
-# Fase 6 — CPU Completa
+# Phase 6 - Full CPU
 
-## Objetivo
+## Goal
 
-Implementar todas as instruções.
+Implement all instructions.
 
-## Implementar
+## Implement
 
-- [ ] 256 OpCodes principais
-- [ ] 256 OpCodes CB-Prefixed
+- [ ] 256 main opcodes
+- [ ] 256 CB-prefixed opcodes
 
-## Testes
+## Tests
 
 - [ ] cpu_instrs.gb
 
-## Marco
+## Milestone
 
-- [ ] Passar completamente em cpu_instrs.gb
+- [ ] Fully pass `cpu_instrs.gb`
 
 ---
 
-# Fase 7 — Timers
+# Phase 7 - Timers
 
-## Objetivo
+## Goal
 
-Implementar temporização interna.
+Implement internal timing.
 
-## Registradores
+## Registers
 
 - [ ] DIV
 - [ ] TIMA
 - [ ] TMA
 - [ ] TAC
 
-## Marco
+## Milestone
 
-- [ ] Testes de timer aprovados
+- [ ] Timer tests passing
 
 ---
 
-# Fase 8 — Interrupts
+# Phase 8 - Interrupts
 
-## Objetivo
+## Goal
 
-Implementar eventos do sistema.
+Implement system events.
 
-## Tipos
+## Types
 
 - [ ] VBlank
 - [ ] LCD
@@ -215,201 +215,200 @@ Implementar eventos do sistema.
 - [ ] Serial
 - [ ] Joypad
 
-## Registradores
+## Registers
 
 - [ ] IME
 - [ ] IE
 - [ ] IF
 
-## Marco
+## Milestone
 
-- [ ] Boot ROM executando corretamente
+- [ ] Boot ROM running correctly
 
 ---
 
-# Fase 9 — Renderização Inicial
+# Phase 9 - Initial Rendering
 
-## Objetivo
+## Goal
 
-Desenhar os primeiros pixels.
+Draw the first pixels.
 
-## Implementar
+## Implement
 
 - [ ] SDL2
 - [ ] Framebuffer
-- [ ] Renderização de Tiles
+- [ ] Tile rendering
 
-## Resolução
+## Resolution
 
 ```text
 160x144
 ```
 
-## Marco
+## Milestone
 
-- [ ] Exibir tiles da VRAM
+- [ ] Display tiles from VRAM
 
 ---
 
-# Fase 10 — Background
+# Phase 10 - Background
 
-## Objetivo
+## Goal
 
-Renderizar cenários.
+Render backgrounds.
 
-## Implementar
+## Implement
 
 - [ ] Tile Maps
 - [ ] Scroll
-- [ ] Paletas
+- [ ] Palettes
 
-## Marco
+## Milestone
 
-- [ ] Tela completa renderizada
+- [ ] Full screen rendered
 
 ---
 
-# Fase 11 — Boot Sequence
+# Phase 11 - Boot Sequence
 
-## Objetivo
+## Goal
 
-Mostrar a sequência de inicialização.
+Show the boot sequence.
 
-## Sincronização
+## Synchronization
 
 - [ ] CPU
 - [ ] PPU
 - [ ] Timers
 
-## Marco
+## Milestone
 
-- [ ] Logo Nintendo aparece corretamente
+- [ ] Nintendo logo appears correctly
 
 ---
 
-# Fase 12 — Sprites
+# Phase 12 - Sprites
 
-## Objetivo
+## Goal
 
-Renderizar objetos móveis.
+Render movable objects.
 
-## Implementar
+## Implement
 
 - [ ] OAM
-- [ ] Prioridade
-- [ ] Flip Horizontal
-- [ ] Flip Vertical
+- [ ] Priority
+- [ ] Horizontal flip
+- [ ] Vertical flip
 
-## Marco
+## Milestone
 
-- [ ] Sprites aparecem corretamente
-
----
-
-# Fase 13 — MBC1
-
-## Objetivo
-
-Suportar ROMs maiores.
-
-## Implementar
-
-- [ ] ROM Banking
-- [ ] RAM Banking
-
-## Marco
-
-- [ ] Jogos comerciais iniciam
+- [ ] Sprites appear correctly
 
 ---
 
-# Fase 14 — Primeiro Jogo Jogável
+# Phase 13 - MBC1
 
-## Objetivo
+## Goal
 
-Executar um jogo completo.
+Support larger ROMs.
 
+## Implement
 
-## Marco
+- [ ] ROM banking
+- [ ] RAM banking
 
-- [ ] Completar uma partida sem falhas graves
+## Milestone
+
+- [ ] Commercial games boot
 
 ---
 
-# Fase 15 — Recursos do Game Boy Color
+# Phase 14 - First Playable Game
 
-## Objetivo
+## Goal
 
-Adicionar suporte específico do GBC.
+Run a full game.
 
-## Implementar
+## Milestone
+
+- [ ] Complete a game session without major issues
+
+---
+
+# Phase 15 - Game Boy Color Features
+
+## Goal
+
+Add GBC-specific support.
+
+## Implement
 
 - [ ] VRAM Bank 0
 - [ ] VRAM Bank 1
-- [ ] WRAM Banking
+- [ ] WRAM banking
 - [ ] Color Palettes
 - [ ] HDMA
 - [ ] Double Speed Mode
 
-## Marco
+## Milestone
 
-- [ ] Jogos exclusivos de GBC iniciam
-
----
-
-# Fase 16 — compatibilidade avançada
-
-## Objetivo
-
-Validar compatibilidade avançada.
-
-## Corrigir
-
-- [ ] Bugs gráficos
-- [ ] Bugs de timing
-- [ ] Bugs de interrupções
-
-## Marco
-
-- [ ] Jogar normalmente
-- [ ] Salvar progresso
-- [ ] Carregar save
+- [ ] GBC-exclusive games boot
 
 ---
 
-# Fase 17 — Áudio
+# Phase 16 - Advanced Compatibility
 
-## Objetivo
+## Goal
 
-Implementar APU.
+Validate advanced compatibility.
 
-## Canais
+## Fix
+
+- [ ] Graphics bugs
+- [ ] Timing bugs
+- [ ] Interrupt bugs
+
+## Milestone
+
+- [ ] Play normally
+- [ ] Save progress
+- [ ] Load save
+
+---
+
+# Phase 17 - Audio
+
+## Goal
+
+Implement the APU.
+
+## Channels
 
 - [ ] Square 1
 - [ ] Square 2
 - [ ] Wave
 - [ ] Noise
 
-## Marco
+## Milestone
 
-- [ ] Música e efeitos funcionando
+- [ ] Music and effects working
 
 ---
 
-# Fase 18 — Otimização
+# Phase 18 - Optimization
 
-## Objetivo
+## Goal
 
-Aumentar compatibilidade e performance.
+Increase compatibility and performance.
 
-## Melhorias
+## Improvements
 
 - [ ] Profiling
-- [ ] Testes automatizados
+- [ ] Automated tests
 - [ ] Save States
 - [ ] Debugger
 - [ ] Benchmarks
 
-## Marco
+## Milestone
 
-- [ ] Compatibilidade acima de 90%
+- [ ] Compatibility above 90%

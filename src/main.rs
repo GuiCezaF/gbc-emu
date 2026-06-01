@@ -51,7 +51,7 @@ impl Cartridge {
         if self.rom.len() < 0x150 {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidData,
-                "ROM muito pequena para conter um cabeçalho válido",
+                "ROM is too small to contain a valid header",
             ));
         }
 
@@ -64,10 +64,10 @@ impl Cartridge {
             .collect();
 
         let rom_size_bytes = rom_size(self.rom[0x0148])
-            .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "Código de ROM inválido"))?;
+            .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "Invalid ROM size code"))?;
 
         let ram_size_bytes = ram_size(self.rom[0x0149])
-            .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "Código de RAM inválido"))?;
+            .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "Invalid RAM size code"))?;
 
         Ok(RomHeader {
             title,
@@ -80,14 +80,16 @@ impl Cartridge {
 fn main() -> io::Result<()> {
     let rom_path = env::args()
         .nth(1)
-        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "Uso: gbc-emu <rom.gb>"))?;
+        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "Usage: gbc-emu <rom.gb>"))?;
 
     let mut cartridge = Cartridge::new();
     cartridge.load_rom(&rom_path)?;
 
-    println!("Título: {}", cartridge.header()?.title);
-    println!("ROM: {} KiB", cartridge.header()?.rom_size_bytes / 1024);
-    println!("RAM: {} KiB", cartridge.header()?.ram_size_bytes / 1024);
+    let header = cartridge.header()?;
+
+    println!("Title: {}", header.title);
+    println!("ROM: {} KiB", header.rom_size_bytes / 1024);
+    println!("RAM: {} KiB", header.ram_size_bytes / 1024);
 
     Ok(())
 }
