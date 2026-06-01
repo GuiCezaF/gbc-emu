@@ -1,414 +1,275 @@
-# Roadmap - Game Boy Color Emulator
+# Game Boy Color Emulator Roadmap
 
-## Overview
+This roadmap is written as an implementation backlog. Each phase should be completed in order, but the checklist inside each phase is intentionally concrete so the next coding step is obvious.
 
-| Phase | Goal | Milestone |
-|--------|--------|--------|
-| 1 | ROM Loader | Load ROMs and read headers |
-| 2 | Memory Bus | Working memory system |
-| 3 | Basic CPU | Execute simple instructions |
-| 4 | CPU Tests | Pass the basic tests |
-| 5 | Flow Control | Loops, calls, and returns |
-| 6 | Full CPU | Pass `cpu_instrs.gb` |
-| 7 | Timers | Working timer |
-| 8 | Interrupts | Interrupt system |
-| 9 | Initial Rendering | Display tiles |
-| 10 | Background | Render backgrounds |
-| 11 | Boot Sequence | Show the Nintendo logo |
-| 12 | Sprites | Show characters |
-| 13 | MBC1 | Larger games boot |
-| 14 | First Playable Game | Fully playable game |
-| 15 | GBC Features | GBC-exclusive games |
-| 16 | - | Advanced compatibility |
-| 17 | Audio | Sounds and music |
-| 18 | Optimization | Compatibility and performance |
+Current baseline:
+- ROM loading and header parsing exist.
+- A memory bus skeleton exists with region routing.
+- A minimal CPU can fetch bytes through the bus.
 
 ---
 
-# Phase 1 - ROM Loader
+## Phase 1 - ROM Loader
 
-## Goal
+Goal: load cartridge data and expose header metadata.
 
-Load and interpret ROMs.
+- [x] Read `.gb` and `.gbc` files into memory
+- [x] Parse title, ROM size, and RAM size from the header
+- [x] Print cartridge metadata at startup
+- [ ] Validate header fields more strictly
+- [ ] Add cartridge type parsing
+- [ ] Reject obviously malformed ROMs early
 
-## Implement
-
-- [x] Read `.gb` files
-- [x] Read `.gbc` files
-- [x] Header parser
-- [x] Display ROM information
-
-## Initial Structure
-
-```go
-type Cartridge struct {
-    ROM []byte
-}
-```
-
-## Milestone
-
-- [x] Load any ROM
-- [x] Display cartridge information
+Done when:
+- A valid ROM is loaded from disk and the emulator can report the cartridge metadata without crashing.
 
 ---
 
-# Phase 2 - Memory Bus
+## Phase 2 - Memory Bus
 
-## Goal
+Goal: centralize all CPU memory access behind a single address decoder.
 
-Centralize memory access.
+- [x] Define address ranges for ROM, VRAM, ERAM, WRAM, OAM, I/O, HRAM, and IE
+- [x] Route reads and writes to the current backing storage
+- [ ] Handle unmapped regions with explicit open-bus behavior
+- [ ] Split I/O registers from raw byte storage
+- [ ] Add ROM banking hooks for future MBC support
+- [ ] Add access helpers for mirrored or restricted regions
 
-## Implement
-
-```go
-Read(addr uint16) byte
-Write(addr uint16, value byte)
-```
-
-## Components
-
-- [ ] ROM
-- [ ] VRAM
-- [ ] WRAM
-- [ ] HRAM
-- [ ] I/O registers
-
-## Milestone
-
-- [ ] CPU accessing all memory through the bus
+Done when:
+- The CPU only touches memory through `Bus::read` and `Bus::write`, and every address in the map has a defined behavior.
 
 ---
 
-# Phase 3 - Basic CPU
+## Phase 3 - Basic CPU
 
-## Goal
+Goal: fetch, decode, and execute a minimal instruction subset.
 
-Execute the first instructions.
+- [x] Implement CPU state with `PC`
+- [x] Fetch bytes through the bus
+- [ ] Add the remaining 16-bit registers: `AF`, `BC`, `DE`, `HL`, `SP`
+- [ ] Implement `NOP`
+- [ ] Implement `LD r, n` and `LD rr, nn`
+- [ ] Implement `INC` and `DEC`
+- [ ] Add flag updates for the implemented instructions
 
-## Registers
-
-- [ ] AF
-- [ ] BC
-- [ ] DE
-- [ ] HL
-- [ ] SP
-- [ ] PC
-
-## First Opcodes
-
-- [ ] NOP
-- [ ] LD
-- [ ] INC
-- [ ] DEC
-
-## Milestone
-
-- [ ] Execute simple programs without crashes
+Done when:
+- The CPU can step through a ROM, advance `PC`, and execute basic load/increment/decrement instructions without corrupting state.
 
 ---
 
-# Phase 4 - CPU Tests
+## Phase 4 - CPU Tests
 
-## Goal
+Goal: verify arithmetic and flag semantics.
 
-Validate arithmetic operations.
+- [ ] Implement `ADD`
+- [ ] Implement `ADC`
+- [ ] Implement `SUB`
+- [ ] Implement `SBC`
+- [ ] Implement `AND`, `OR`, `XOR`, and `CP`
+- [ ] Validate `Z`, `N`, `H`, and `C` flag behavior
+- [ ] Run ALU-focused community test ROMs
 
-## Implement
-
-- [ ] ADD
-- [ ] ADC
-- [ ] SUB
-- [ ] SBC
-- [ ] AND
-- [ ] OR
-- [ ] XOR
-- [ ] CP
-
-## Tests
-
-- [ ] Community test ROMs
-
-## Milestone
-
-- [ ] Pass the basic ALU tests
+Done when:
+- Arithmetic results and flags match the test ROM expectations for the supported instructions.
 
 ---
 
-# Phase 5 - Flow Control
+## Phase 5 - Flow Control
 
-## Goal
+Goal: support branching, calls, returns, and stack usage.
 
-Execute real programs.
+- [ ] Implement `JP`, `JR`, `CALL`, `RET`, and `RST`
+- [ ] Implement conditional variants
+- [ ] Add stack push/pop helpers
+- [ ] Verify call depth and return address handling
 
-## Implement
-
-- [ ] JP
-- [ ] JR
-- [ ] CALL
-- [ ] RET
-- [ ] RST
-
-## Concepts
-
-- [ ] Stack
-- [ ] Conditional jumps
-- [ ] Addressing
-
-## Milestone
-
-- [ ] Programs with working loops
+Done when:
+- Loops, subroutines, and conditional branches behave correctly in small programs.
 
 ---
 
-# Phase 6 - Full CPU
+## Phase 6 - Full CPU
 
-## Goal
+Goal: complete the instruction set needed by standard CPU test ROMs.
 
-Implement all instructions.
+- [ ] Implement all 256 main opcodes
+- [ ] Implement all 256 CB-prefixed opcodes
+- [ ] Audit each opcode for correct flags, cycles, and operand width
+- [ ] Run `cpu_instrs.gb`
 
-## Implement
-
-- [ ] 256 main opcodes
-- [ ] 256 CB-prefixed opcodes
-
-## Tests
-
-- [ ] cpu_instrs.gb
-
-## Milestone
-
-- [ ] Fully pass `cpu_instrs.gb`
+Done when:
+- The official CPU instruction test ROM passes cleanly.
 
 ---
 
-# Phase 7 - Timers
+## Phase 7 - Timers
 
-## Goal
+Goal: emulate divider and timer behavior.
 
-Implement internal timing.
+- [ ] Implement `DIV`
+- [ ] Implement `TIMA`, `TMA`, and `TAC`
+- [ ] Apply timer increments based on the selected clock source
+- [ ] Handle `TIMA` overflow and reload timing
+- [ ] Reset `DIV` correctly on write
 
-## Registers
-
-- [ ] DIV
-- [ ] TIMA
-- [ ] TMA
-- [ ] TAC
-
-## Milestone
-
-- [ ] Timer tests passing
+Done when:
+- Timer test ROMs pass and timer-driven games stay in sync.
 
 ---
 
-# Phase 8 - Interrupts
+## Phase 8 - Interrupts
 
-## Goal
+Goal: request and service hardware interrupts correctly.
 
-Implement system events.
+- [ ] Implement `IME`, `IE`, and `IF`
+- [ ] Add interrupt request bits for VBlank, LCD, Timer, Serial, and Joypad
+- [ ] Prioritize interrupts in hardware order
+- [ ] Push `PC` and jump to the correct vector
+- [ ] Support delayed enable/disable behavior
 
-## Types
-
-- [ ] VBlank
-- [ ] LCD
-- [ ] Timer
-- [ ] Serial
-- [ ] Joypad
-
-## Registers
-
-- [ ] IME
-- [ ] IE
-- [ ] IF
-
-## Milestone
-
-- [ ] Boot ROM running correctly
+Done when:
+- Interrupts are requested, masked, acknowledged, and serviced like hardware.
 
 ---
 
-# Phase 9 - Initial Rendering
+## Phase 9 - Initial Rendering
 
-## Goal
+Goal: show tiles on screen.
 
-Draw the first pixels.
+- [ ] Create a window and frame buffer
+- [ ] Decode tile data from VRAM
+- [ ] Convert tile bitplanes into pixels
+- [ ] Present a stable frame at 160x144
 
-## Implement
-
-- [ ] SDL2
-- [ ] Framebuffer
-- [ ] Tile rendering
-
-## Resolution
-
-```text
-160x144
-```
-
-## Milestone
-
-- [ ] Display tiles from VRAM
+Done when:
+- The emulator can display tile graphics from VRAM.
 
 ---
 
-# Phase 10 - Background
+## Phase 10 - Background
 
-## Goal
+Goal: render the background layer.
 
-Render backgrounds.
+- [ ] Read the correct tile map
+- [ ] Apply `SCX` and `SCY`
+- [ ] Apply background palette mapping
+- [ ] Render the full 160x144 view
 
-## Implement
-
-- [ ] Tile Maps
-- [ ] Scroll
-- [ ] Palettes
-
-## Milestone
-
-- [ ] Full screen rendered
+Done when:
+- Background scrolling and palette selection visibly affect the output.
 
 ---
 
-# Phase 11 - Boot Sequence
+## Phase 11 - Boot Sequence
 
-## Goal
+Goal: reproduce the boot ROM visible behavior.
 
-Show the boot sequence.
+- [ ] Match CPU, PPU, and timer timing during boot
+- [ ] Render the Nintendo logo correctly
+- [ ] Unmap boot behavior at the right point
+- [ ] Continue into cartridge execution after boot
 
-## Synchronization
-
-- [ ] CPU
-- [ ] PPU
-- [ ] Timers
-
-## Milestone
-
-- [ ] Nintendo logo appears correctly
+Done when:
+- The boot sequence reaches the expected post-logo state and hands off to the cartridge.
 
 ---
 
-# Phase 12 - Sprites
+## Phase 12 - Sprites
 
-## Goal
+Goal: render OAM sprites correctly.
 
-Render movable objects.
+- [ ] Read sprite attributes from OAM
+- [ ] Support priority rules
+- [ ] Support horizontal and vertical flip
+- [ ] Respect sprite size configuration
 
-## Implement
-
-- [ ] OAM
-- [ ] Priority
-- [ ] Horizontal flip
-- [ ] Vertical flip
-
-## Milestone
-
-- [ ] Sprites appear correctly
+Done when:
+- Sprites appear at the correct position, orientation, and priority.
 
 ---
 
-# Phase 13 - MBC1
+## Phase 13 - MBC1
 
-## Goal
+Goal: support banked cartridges.
 
-Support larger ROMs.
+- [ ] Implement ROM bank selection
+- [ ] Implement RAM bank selection
+- [ ] Handle RAM enable writes
+- [ ] Route banked reads and writes through the bus
 
-## Implement
-
-- [ ] ROM banking
-- [ ] RAM banking
-
-## Milestone
-
-- [ ] Commercial games boot
+Done when:
+- Larger commercial ROMs boot and can access their save RAM.
 
 ---
 
-# Phase 14 - First Playable Game
+## Phase 14 - First Playable Game
 
-## Goal
+Goal: get one real game into a playable state.
 
-Run a full game.
+- [ ] Boot to the title screen
+- [ ] Accept controller input
+- [ ] Render core gameplay without blocking bugs
+- [ ] Preserve save data if the game requires it
 
-## Milestone
-
-- [ ] Complete a game session without major issues
-
----
-
-# Phase 15 - Game Boy Color Features
-
-## Goal
-
-Add GBC-specific support.
-
-## Implement
-
-- [ ] VRAM Bank 0
-- [ ] VRAM Bank 1
-- [ ] WRAM banking
-- [ ] Color Palettes
-- [ ] HDMA
-- [ ] Double Speed Mode
-
-## Milestone
-
-- [ ] GBC-exclusive games boot
+Done when:
+- At least one commercial game can be started and played for a meaningful session.
 
 ---
 
-# Phase 16 - Advanced Compatibility
+## Phase 15 - Game Boy Color Features
 
-## Goal
+Goal: support GBC-specific hardware.
 
-Validate advanced compatibility.
+- [ ] Add VRAM bank selection
+- [ ] Add WRAM banking
+- [ ] Add color palette registers
+- [ ] Add HDMA
+- [ ] Add double-speed mode
 
-## Fix
-
-- [ ] Graphics bugs
-- [ ] Timing bugs
-- [ ] Interrupt bugs
-
-## Milestone
-
-- [ ] Play normally
-- [ ] Save progress
-- [ ] Load save
+Done when:
+- GBC-only games boot and render color graphics correctly.
 
 ---
 
-# Phase 17 - Audio
+## Phase 16 - Advanced Compatibility
 
-## Goal
+Goal: reduce game-specific edge cases.
 
-Implement the APU.
+- [ ] Fix graphics timing bugs
+- [ ] Fix interrupt edge cases
+- [ ] Fix timer corner cases
+- [ ] Fix save/load edge cases
 
-## Channels
-
-- [ ] Square 1
-- [ ] Square 2
-- [ ] Wave
-- [ ] Noise
-
-## Milestone
-
-- [ ] Music and effects working
+Done when:
+- Common commercial games run without obvious hardware-accuracy regressions.
 
 ---
 
-# Phase 18 - Optimization
+## Phase 17 - Audio
 
-## Goal
+Goal: generate Game Boy sound.
 
-Increase compatibility and performance.
+- [ ] Implement square channel 1
+- [ ] Implement square channel 2
+- [ ] Implement wave channel
+- [ ] Implement noise channel
+- [ ] Mix channels into host audio output
 
-## Improvements
+Done when:
+- Games produce recognizable music and sound effects in sync with emulation.
 
-- [ ] Profiling
-- [ ] Automated tests
-- [ ] Save States
-- [ ] Debugger
-- [ ] Benchmarks
+---
 
-## Milestone
+## Phase 18 - Optimization
 
-- [ ] Compatibility above 90%
+Goal: improve speed and maintainability without breaking accuracy.
+
+- [ ] Add profiling
+- [ ] Add regression tests for hardware behavior
+- [ ] Add save states
+- [ ] Add debugger views for CPU, memory, and PPU state
+- [ ] Add benchmarks for representative workloads
+
+Done when:
+- Performance is measured, regressions are caught automatically, and the emulator remains accurate under optimization work.
