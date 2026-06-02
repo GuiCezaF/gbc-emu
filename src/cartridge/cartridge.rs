@@ -22,7 +22,7 @@ pub enum CartridgeError {
     Io(io::Error),
     RomTooSmall,
     InvalidHeaderChecksum,
-    InvalidNintendoLogo,
+    InvalidLogo,
     UnsupportedCartridgeType(u8),
     InvalidRomSize(u8),
     InvalidRamSize(u8),
@@ -48,8 +48,8 @@ impl fmt::Display for CartridgeError {
             CartridgeError::InvalidHeaderChecksum => {
                 write!(f, "invalid ROM header checksum")
             }
-            CartridgeError::InvalidNintendoLogo => {
-                write!(f, "invalid Nintendo logo")
+            CartridgeError::InvalidLogo => {
+                write!(f, "invalid logo")
             }
             CartridgeError::UnsupportedCartridgeType(code) => {
                 write!(f, "unsupported cartridge type: 0x{code:02X}")
@@ -177,7 +177,7 @@ impl Cartridge {
     fn validate_logo(&self) -> Result<()> {
         let logo_exists = self.rom.get(0x0104..0x0134) == Some(&LOGO[..]);
         if !logo_exists {
-            return Err(CartridgeError::InvalidNintendoLogo);
+            return Err(CartridgeError::InvalidLogo);
         }
         Ok(())
     }

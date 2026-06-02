@@ -16,9 +16,9 @@ Goal: load cartridge data and expose header metadata.
 - [x] Read `.gb` and `.gbc` files into memory
 - [x] Parse title, ROM size, and RAM size from the header
 - [x] Print cartridge metadata at startup
-- [ ] Validate header fields more strictly
-- [ ] Add cartridge type parsing
-- [ ] Reject obviously malformed ROMs early
+- [x] Validate header fields more strictly
+- [x] Add cartridge type parsing
+- [x] Reject obviously malformed ROMs early
 
 Done when:
 - A valid ROM is loaded from disk and the emulator can report the cartridge metadata without crashing.
@@ -166,7 +166,7 @@ Done when:
 Goal: reproduce the boot ROM visible behavior.
 
 - [ ] Match CPU, PPU, and timer timing during boot
-- [ ] Render the Nintendo logo correctly
+- [ ] Render the logo correctly
 - [ ] Unmap boot behavior at the right point
 - [ ] Continue into cartridge execution after boot
 
